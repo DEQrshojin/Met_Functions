@@ -94,7 +94,6 @@ x$solar <- ifelse(x$mAir > 0,
 # Sager, J.C. and McFarlane, J.C. 1997. Plant Growth Chamber Handbook, Chapter 1, Radiation.  
 #    Iowa State University North Central Regional Research Publication No. 340. 
 # Conversion factor from W/m2 to umol/m2/s = 4.57; only 45% tho in the 400-700 nm wavelength range.
-# Units are in photons <- umol/m2/s
 
 x$PAR <- x$solar * 2.1 
 
