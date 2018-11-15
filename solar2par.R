@@ -17,10 +17,10 @@
 solar2par <- function(strDate = NULL,     # as.POSIXct for the moment, coerce in the future
                       endDate = NULL,     # as.POSIXct for the moment, coerce in the future
                       timeStep = NULL,    # in hours
-                      lat = NULL,         
-                      lon = NULL,
+                      lat = NULL,         # in decimal degrees
+                      lon = NULL,         # in decimal degrees
                       tz = NULL,          # as an integer, PST = -8
-                      pres = NULL) {     # static pressure relative to MSL = 1013 millibars
+                      pres = NULL) {      # static pressure relative to MSL = 1013 millibars
 
 # LIBRARIES ----
 library(lubridate)
@@ -38,7 +38,6 @@ timeStep = timeStep * 3600 # Convert timeStep from hours to seconds
 
 # When I pass the timeStep as a fraction (minutes/60), what is being passed minutes/60 or the float
 x = data.frame(seq(strDate, endDate, timeStep)) 
-
 names(x) = "ts"
 x$hr = hour(x$ts) + minute(x$ts) / 60 # Hour of day expressed as a decimal 
 x$doy = as.numeric(strftime(x$ts, format = "%j"))  # Day of year
