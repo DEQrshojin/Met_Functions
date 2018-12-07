@@ -102,24 +102,24 @@ metData4 = metData3[which(metData3$USAF != 994026), ]
 
 # Plot data ----
 
-metPlots = list()
-
-for (n in 2 : length(climVars$Var1))
-{
-    
-    metPlots[[n]] = ggplot(metData4) +
-                    geom_point(aes(x = DateTime, y = metData4[, climVars[n, 5]]),
-                               size = 0.25, shape = 1) +
-                    scale_y_continuous(limits = c(climVars[n, 3], climVars[n, 4]),
-                                       breaks = seq(climVars[n, 3], climVars[n, 4],
-                                                    (climVars[n, 4] - climVars[n, 3]) / 5)) +
-                    xlab("Date") + ylab(climVars[n, 2]) + theme_bw() + 
-                    facet_wrap(~USAF, ncol = 1)
-
-    ggsave(paste0(dataDir, climVars[n, 1], ".png"), metPlots[[n]],
-           width = 10, height = 6.5, units = "in", dpi = 300)
-
-}
+# metPlots = list()
+# 
+# for (n in 2 : length(climVars$Var1))
+# {
+#     
+#     metPlots[[n]] = ggplot(metData4) +
+#                     geom_point(aes(x = DateTime, y = metData4[, climVars[n, 5]]),
+#                                size = 0.25, shape = 1) +
+#                     scale_y_continuous(limits = c(climVars[n, 3], climVars[n, 4]),
+#                                        breaks = seq(climVars[n, 3], climVars[n, 4],
+#                                                     (climVars[n, 4] - climVars[n, 3]) / 5)) +
+#                     xlab("Date") + ylab(climVars[n, 2]) + theme_bw() + 
+#                     facet_wrap(~USAF, ncol = 1)
+# 
+#     ggsave(paste0(dataDir, climVars[n, 1], ".png"), metPlots[[n]],
+#            width = 10, height = 6.5, units = "in", dpi = 300)
+# 
+# }
 
 saveRDS(metData4, file = paste0(dataDir, "metData.RData"),
         ascii = FALSE, version = NULL, compress = TRUE, refhook = NULL)

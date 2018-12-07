@@ -1,8 +1,5 @@
 # DIRECT BEAM SOLAR TO PAR ----
-
-# Ryan Shojinaga, Water Quality Analyst
-# Watershed Management Section, Oregon DEQ
-# Shojinaga.Ryan@DEQ.State.OR.US, 503-229-5777
+# Ryan Shojinaga, Oregon DEQ, Shojinaga.Ryan@DEQ.State.OR.US, 503-229-5777
 # 5 September 2018
 
 # Creates a timeseries of photosynthically active radiation (PAR) based on clear-sky solar
@@ -49,42 +46,42 @@ x$doy = as.numeric(strftime(x$ts, format = "%j"))  # Day of year
 #    Solar Energy Research Institute, Golden, CO.
 
 x$etr <- 1367 * (1.00011 + 0.034221 * cos(2 * pi * (x$doy - 1)/ 365) +
-                0.00128 * sin(2 * pi * (x$doy - 1) / 365) + 0.000719 *
-                cos(2 * (2 * pi * (x$doy - 1) / 365)) + 0.000077 *
-                sin(2 * (2 * pi * (x$doy - 1)/365))) # Extraterrestrial direct beam intensity;
+    0.00128 * sin(2 * pi * (x$doy - 1) / 365) + 0.000719 *
+    cos(2 * (2 * pi * (x$doy - 1) / 365)) + 0.000077 *
+    sin(2 * (2 * pi * (x$doy - 1)/365))) # Extraterrestrial direct beam intensity;
 x$dAng <- 6.283185 * (x$doy - 1) / 365 # Day angle for position of earth around sun
 x$dec <- (180 / pi) * (0.006918 - 0.399912 * cos(x$dAng) + 0.070257 *
-                      sin(x$dAng) - 0.006758 * cos(2 * x$dAng) +
-                      0.000907 * sin(2 * x$dAng) - 0.002697 *
-                      cos(3 * x$dAng) + 0.00148 * sin(3 * x$dAng)) # solar decliniation
+    sin(x$dAng) - 0.006758 * cos(2 * x$dAng) +
+    0.000907 * sin(2 * x$dAng) - 0.002697 *
+    cos(3 * x$dAng) + 0.00148 * sin(3 * x$dAng)) # solar decliniation
 x$eqt <- 229.18 * (0.0000075 + 0.001868 * cos(x$dAng) - 0.032077 * sin(x$dAng) -
-                  0.014615 * cos(2 * x$dAng) - 0.040849 * sin(2 * x$dAng)) # equation of sun time
+    0.014615 * cos(2 * x$dAng) - 0.040849 * sin(2 * x$dAng)) # equation of sun time
 x$hAng <- 15 * (x$hr - 12.5) + (lon) - (tz) * 15 + x$eqt / 4 # hour angle of the sun to horizon
 x$zAng <- (180 / pi) * acos(cos(x$dec / (180 / pi)) * cos(lat / (180 / pi)) *
-                       cos(x$hAng / (180 / pi)) + sin(x$dec / (180 / pi)) *
-                       sin(lat / (180 / pi))) # Zenith angle
+    cos(x$hAng / (180 / pi)) + sin(x$dec / (180 / pi)) *
+    sin(lat / (180 / pi))) # Zenith angle
 x$mAir <- ifelse(x$zAng < 89,
-                  1 / (cos(x$zAng / (180 / pi)) + 0.15 / (93.885 - x$zAng)^1.25),
-                  0) # Geometrical air mass
+                 1 / (cos(x$zAng / (180 / pi)) + 0.15 / (93.885 - x$zAng)^1.25),
+                 0) # Geometrical air mass
 x$tRay <- ifelse(x$mAir > 0,
-                  exp(-0.0903 * (pres * x$mAir / 1013) ^ 0.84 *
-                  (1 + pres * x$mAir / 1013 - (pres * x$mAir / 1013)^1.01)),
-                  0)
-x$tOz <- ifelse(x$mAir > 0,
-                 1 - 0.1611 * (oz * x$mAir) * (1 + 139.48 * (oz * x$mAir))^-0.3034 -
-                 0.002715 * (oz * x$mAir) / (1 + 0.044*(oz * x$mAir) + 0.0003 *
-                 (oz * x$mAir)^2),
+                 exp(-0.0903 * (pres * x$mAir / 1013) ^ 0.84 *
+                 (1 + pres * x$mAir / 1013 - (pres * x$mAir / 1013)^1.01)),
                  0)
+x$tOz <- ifelse(x$mAir > 0,
+                1 - 0.1611 * (oz * x$mAir) * (1 + 139.48 * (oz * x$mAir))^-0.3034 -
+                0.002715 * (oz * x$mAir) / (1 + 0.044*(oz * x$mAir) + 0.0003 *
+                (oz * x$mAir)^2),
+                0)
 x$tGas <- ifelse(x$mAir > 0,
-                  exp(-0.0127 * (x$mAir * pres / 1013)^0.26),
-                  0)
+                 exp(-0.0127 * (x$mAir * pres / 1013)^0.26),
+                 0)
 x$tH2O <- ifelse(x$mAir > 0,
-                  1 - 2.4959 * x$mAir * h2o /
-                  ((1 + 79.034 * h2o * x$mAir)^0.6828 + 6.385 * h2o * x$mAir),
-                  0)
+                 1 - 2.4959 * x$mAir * h2o /
+                 ((1 + 79.034 * h2o * x$mAir)^0.6828 + 6.385 * h2o * x$mAir),
+                 0)
 x$tAer <- ifelse(x$mAir > 0,
-                  exp(-(taua^0.873) * (1 + taua - taua^0.7088) * x$mAir^0.9108),
-                  0)
+                 exp(-(taua^0.873) * (1 + taua - taua^0.7088) * x$mAir^0.9108),
+                 0)
 # Calculation of direct beam solar Units in W/m2
 x$solar <- ifelse(x$mAir > 0,
                   0.9662 * x$etr * x$tRay * x$tOz * x$tGas * x$tH2O * x$tAer,
