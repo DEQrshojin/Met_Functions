@@ -1,19 +1,17 @@
 # ---- READ NOAA CLIMATE DATA AND PROCESS FOR PET ESTIMATIONS ----
-# This script first examines the data then processes it based on the findings of that exam
 # Ryan Shojinaga, Water Quality Analyst, Oregon DEQ, Watershed Management Section
 # shojinaga.ryan@deq.state.or.us, 503-229-5777; 16 October, 2018
 #
 # Libraries ----
-
 library(lubridate)
 library(reshape2)
 library(ggplot2)
 library(imputeTS)
 
 # Read in data ----
-dataDir <- "C:/Users/rshojin/Desktop/001_projects/mid_coast_DO_tmdls/siletz/001_data/climate/noaa/"
+dataDir <- "//deqhq1/tmdl/TMDL_WR/MidCoast/Models/Dissolved Oxygen/Middle_Siletz_River_1710020405/001_data/met_data/"
 rawMetData <- readRDS(paste0(dataDir, "metData_subdaily_raw.RData"))
-rawMetData <- rawMetData[which(rawMetData$USAF != "994280"), ]
+rawMetData <- rawMetData[which(rawMetData$USAF != "994280"), ] # Remove NWPT Muni Sta. - sparse data
 rawMetData <- rawMetData[complete.cases(rawMetData[, 1]), ]
 coDate = as.POSIXct('2004-01-01', '%Y-%m-%d', tz = "America/Los_Angeles")
 rawMetData <- rawMetData[which(rawMetData$DateTime >= coDate), ]
@@ -39,6 +37,9 @@ rawMetData = rawMetData[, -c(6 : 10)]
 metData = melt(rawMetData, id.vars = c('DateTime', 'DT2', 'Name'))
 metData = dcast(metData, DT2 ~ Name + variable, fun.aggregate = mean, value.var = 'value')
 
+# This is where I have selected which station to use preferrentially. That is this script creates
+# only one time series based on two stations of data with slightly overlapping time periods.
+# The data are identical.
 metData$Spd = ifelse(is.nan(metData$AR1_Spd), metData$AR2_Spd, metData$AR1_Spd)
 metData$Tmp = ifelse(is.nan(metData$AR1_Temp), metData$AR2_Temp, metData$AR1_Temp)
 metData$Rhx = ifelse(is.nan(metData$AR1_RHx), metData$AR2_RHx, metData$AR1_RHx)
@@ -107,15 +108,14 @@ consecutivesDF = consecutivesDF[, c(1, 3, 2)]
 plot_metfigs(consecutivesDF, dlims)
 
 # Based on analysis of the above, I prospose to do this - if the gap is 12 hours or fewer,
-# interpolate the values, otherwise, give daily mean values. Calculate the daily means first,
-# the interpolate.
+# interpolate the values, otherwise, give daily mean values.
+# Calculate the daily means first, then interpolate.
 metData$doy <- as.numeric(strftime(metData$DateTime, format = "%j"))
 metDataLong <- melt(metData, id.vars = c('DateTime', 'doy'), na.rm = TRUE) # Set to long format
 dailyMeans <- dcast(metDataLong, doy ~ variable, fun.aggregate = mean)
 dailyMeansPlt <- melt(dailyMeans, id.vars = 'doy') # Set to long format for plotting
 metDataLong <- metDataLong[, -2]
 metDataLong$variable <- as.character(metDataLong$variable)
-
 metDatNA <- metData[which(is.na(metData[, 2 : 4])), ] # Isolate the lines that are NA
 metDatNA <- metDatNA[complete.cases(metDatNA[, 1]), ]
 metDatNA$Spd <- ifelse(is.na(metDatNA$Spd), -100, NA) # Replace NA w/ a dummy and non-NA w/ NA
@@ -185,35 +185,6 @@ metData <- dcast(metData, DateTime ~ variable, fun.aggregate = mean)
 metData$Spd = na.interpolation(metData$Spd, option = 'linear')
 metData$Tmp = na.interpolation(metData$Tmp, option = 'linear')
 metData$Rhx = na.interpolation(metData$Rhx, option = 'linear')
+metData[, 2 : 4] = round(metData[, 2 : 4], 1)
 
-metDataLong <- melt(metData, id.vars = 'DateTime') # Set to long format
-
-tlims = as.POSIXct(c('2011-03-21', '2011-05-07'), '%Y-%m-%d', tz = 'America/Los_Angeles')
-
-plot_metfigs(metDataLong, tlims)
-
-# NOW ADD PRECIPITATION DATA
-
-
-
-
-
-
-
-plot_metfigs <- function(metData, dlims) {
-
-  metPlt <- ggplot(metData, aes(x = metData[, 1], y = metData[, 3], group = metData[, 2])) +
-    geom_point(size = 0.5, shape = 0) + scale_x_datetime(limits = dlims) +
-    facet_wrap(~variable, ncol = 1)
-
-  ggsave(paste0(dataDir, "met_data_filled_big_gap.png"),
-         metPlt,
-         width = 15,
-         height = 10,
-         dpi = 300,
-         units = "in")
-
-}
-
-
-
+saveRDS(metData, 'E:/slz_tmp/noaa_met_hourly_proc.RData', ascii = FALSE)

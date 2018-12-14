@@ -13,7 +13,7 @@ library(lubridate)
 
 # Specify dates for data retrieval
 
-strYear = 2012
+strYear = 2004
 
 endYear = 2018
 
@@ -117,24 +117,24 @@ plot(selectedStationsShape, add = TRUE, col = 'blue')
 
 # Retrieve the data from the selected stations ----
 
-saveDir = "C:/Users/rshojin/Desktop/001_projects/mid_coast_DO_tmdls/siletz/001_data/climate/noaa/"
+saveDir = "E:/slz_tmp/"
 
 baseURL = "ftp://ftp.ncdc.noaa.gov/pub/data/noaa/"
 
-strYear = 2000
+strYear = 2004
 
 endYear = 2018
 
 years4Download = strYear : endYear
 
-stationID = aoiStations[8, ]
+stationID = aoiStations[1, ]
 
 weatherFileURL = paste0(baseURL, years4Download, "/",
                         stationID[, 1], "-",
                         stationID[, 2], "-",
                         years4Download, ".gz")
 
-weatherFilDest = paste0(saveDir, "newp_muni_ap_2_",
+weatherFilDest = paste0(saveDir, "corv_muni_ap_1_",
                         stationID[, 1], "-",
                         stationID[, 2], "-",
                         years4Download, ".gz")

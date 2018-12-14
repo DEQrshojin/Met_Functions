@@ -1,13 +1,18 @@
-# ---- Interrogate Oregon PRISM rasters at a point or a vector of point data ----
+# ---- Interrogate Oregon PRISM rasters at a point or a data.frame of point data ----
 # Ryan Shojinaga, Water Quality Analyst, Oregon DEQ, Watershed Management Section
 # shojinaga.ryan@deq.state.or.us, 503-229-5777
 # 11 October 2018
 # 
 # From PRISM CLIMATE DATA:
 # Daly, C., Halbleib, M., Smith, J.I., Gibson, W.P., Doggett, M.K., Taylor, G.H., Curtis, J.,
-#   and Pasteris, P.P. 2008.Physiographically sensitive mapping of climatological temperature
+#   and Pasteris, P.P. 2008. Physiographically sensitive mapping of climatological temperature
 #   and precipitation across the conterminous United States. Internation Journal Of Climatology
 #   DOI: 10.1002/joc.1688
+
+# Pass: lat/lon or df of lat/lon
+# Pass: list (vector) of parameters: 
+
+
 
 # Libraries ----
 library(raster)
