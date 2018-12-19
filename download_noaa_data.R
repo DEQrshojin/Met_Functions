@@ -1,4 +1,4 @@
-# ---- GET STATIONS FROM FROM NOAA OCDD ----
+# ---- DOWNLOAD NOAA DATA ----
 # Ryan Shojinaga, Water Quality Analyst, Oregon DEQ, Watershed Management Section
 # shojinaga.ryan@deq.state.or.us, 503-229-5777
 # 16 October, 2018

@@ -2,6 +2,8 @@
 # Ryan Shojinaga, Water Quality Analyst, Oregon DEQ, Watershed Management Section
 # shojinaga.ryan@deq.state.or.us, 503-229-5777
 # 19 December 2018
+# Returns a data frame of NOAA stations based on user arguments of lat/lon box OR shapefile,
+# dates and factor of AOI expansion. 
 
 get_noaa_stations <- function(aoI = NULL, expF = NULL, strD = NULL, endD = NULL) {
   
